@@ -1,13 +1,46 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, BadgeCheck, BriefcaseBusiness, Check, ChevronLeft, ChevronRight, Clock3, Headphones, Luggage, MapPin, MessageCircle, Plane, ShieldCheck, Sparkles, Star, Usb, UserRoundCheck, Users, Wifi, X, ZoomIn } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  BriefcaseBusiness,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  Headphones,
+  Luggage,
+  MapPin,
+  MessageCircle,
+  Plane,
+  ShieldCheck,
+  Sparkles,
+  Usb,
+  UserRoundCheck,
+  Users,
+  Wifi,
+  X,
+  ZoomIn,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SiteHeader } from "@/components/site-header";
-import { QuoteForm, openWhatsApp } from "@/components/quote-form";
+import { QuoteForm } from "@/components/quote-form";
+import { company, openWhatsApp } from "@/data/company";
 import { faqs, fleet, services, testimonials } from "@/data/site";
 import heroImage from "@/assets/veloce-hero.jpg";
 import interiorImage from "@/assets/veloce-interior.jpg";
@@ -15,20 +48,77 @@ import fleetImage from "@/assets/veloce-fleet.jpg";
 import detailImage from "@/assets/veloce-detail.jpg";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [
-    { title: "Veloce Executive Vans | Transporte Executivo em Curitiba" },
-    { name: "description", content: "Transporte executivo premium em Curitiba: transfers, viagens, eventos e soluções corporativas em vans de alto padrão." },
-    { property: "og:title", content: "Veloce Executive Vans | Sua viagem em outro nível" },
-    { property: "og:description", content: "Conforto, segurança e pontualidade em transporte executivo premium." },
-    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
-  ], scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context":"https://schema.org", "@type":"LocalBusiness", name:"Veloce Executive Vans", description:"Transporte executivo premium em Curitiba e região.", areaServed:"Curitiba e região", priceRange:"$$$" }) }] }),
+  head: () => ({
+    meta: [
+      { title: "MJG Transportes | Transporte Executivo em Curitiba" },
+      {
+        name: "description",
+        content:
+          "Transporte executivo premium em Curitiba: transfers, viagens, eventos e soluções corporativas em vans de alto padrão.",
+      },
+      { property: "og:title", content: "MJG Transportes | Sua viagem em outro nível" },
+      {
+        property: "og:description",
+        content: "Conforto, segurança e pontualidade em transporte executivo premium.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: company.siteUrl ? [{ rel: "canonical", href: company.siteUrl }] : [],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: company.name,
+          description: "Transporte executivo premium em Curitiba e região.",
+          areaServed: company.serviceArea,
+          url: company.siteUrl || undefined,
+          telephone: company.whatsappNumber ? `+${company.whatsappNumber}` : undefined,
+        }),
+      },
+    ],
+  }),
   component: HomePage,
 });
 
 const gallery = [heroImage, interiorImage, fleetImage, detailImage];
-const benefits = ["Bancos em couro reclináveis", "Ar-condicionado digital", "Wi-Fi 5G a bordo", "Tomadas USB individuais", "Bagageiro estendido", "Água cortesia"];
+const benefits = [
+  "Configuração conforme o grupo",
+  "Climatização",
+  "Conforto durante o trajeto",
+  "Veículo preparado para a viagem",
+  "Espaço para bagagem sob consulta",
+];
 
-function SectionHead({ eyebrow, title, copy, dark=false }: { eyebrow:string; title:string; copy?:string; dark?:boolean }) { return <div className="mb-10 max-w-2xl"><p className="eyebrow">{eyebrow}</p><h2 className={`font-display text-4xl leading-tight md:text-5xl ${dark ? "text-foreground" : "text-ink"}`}>{title}</h2>{copy && <p className={`mt-4 leading-relaxed ${dark ? "text-muted-foreground" : "text-ink-muted"}`}>{copy}</p>}</div> }
+function SectionHead({
+  eyebrow,
+  title,
+  copy,
+  dark = false,
+}: {
+  eyebrow: string;
+  title: string;
+  copy?: string;
+  dark?: boolean;
+}) {
+  return (
+    <div className="mb-10 max-w-2xl">
+      <p className="eyebrow">{eyebrow}</p>
+      <h2
+        className={`font-display text-4xl leading-tight md:text-5xl ${dark ? "text-foreground" : "text-ink"}`}
+      >
+        {title}
+      </h2>
+      {copy && (
+        <p className={`mt-4 leading-relaxed ${dark ? "text-muted-foreground" : "text-ink-muted"}`}>
+          {copy}
+        </p>
+      )}
+    </div>
+  );
+}
 
 function HomePage() {
   const [service, setService] = useState<(typeof services)[number] | null>(null);
@@ -36,58 +126,687 @@ function HomePage() {
   const [review, setReview] = useState(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [contactSent, setContactSent] = useState(false);
-  const scroll = (id:string) => document.querySelector(id)?.scrollIntoView({behavior:"smooth"});
+  const [contact, setContact] = useState({ name: "", phone: "", email: "", message: "" });
+  const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   const currentVehicle = fleet[vehicle];
   const currentTestimonial = testimonials[review];
   if (!currentVehicle || !currentTestimonial) return null;
-  return <main className="overflow-hidden bg-background text-foreground">
-    <SiteHeader />
-    <section id="inicio" className="relative flex min-h-[94svh] items-end overflow-hidden pb-28 pt-32">
-      <img src={heroImage} alt="Van executiva Veloce em um terminal de aeroporto" width={1920} height={1088} className="absolute inset-0 h-full w-full object-cover object-[66%_center]" />
-      <div className="hero-overlay absolute inset-0"/>
-      <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">
-        <div className="max-w-3xl animate-reveal">
-          <p className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[.24em] text-primary"><span className="h-px w-10 bg-primary"/> Transporte executivo premium</p>
-          <h1 className="font-display text-5xl leading-[1.04] text-foreground md:text-7xl lg:text-[5.2rem]">Seu destino começa com uma <em className="font-light text-primary">experiência melhor.</em></h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-foreground/75 md:text-xl">Transporte executivo com conforto, segurança e pontualidade para cada momento da sua viagem.</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row"><Button size="lg" onClick={()=>scroll("#orcamento")} className="h-13 px-7">Solicitar orçamento <ArrowRight/></Button><Button size="lg" variant="outline" onClick={()=>scroll("#frota")} className="h-13 border-foreground/30 bg-background/10 px-7 text-foreground backdrop-blur hover:bg-foreground hover:text-background">Conhecer a frota</Button></div>
+  return (
+    <main className="overflow-hidden bg-background text-foreground">
+      <SiteHeader />
+      <section
+        id="inicio"
+        className="relative flex min-h-[94svh] items-end overflow-hidden pb-28 pt-32"
+      >
+        <img
+          src={heroImage}
+          alt="Van executiva da MJG Transportes em um terminal de aeroporto"
+          width={1920}
+          height={1088}
+          className="absolute inset-0 h-full w-full object-cover object-[66%_center]"
+        />
+        <div className="hero-overlay absolute inset-0" />
+        <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">
+          <div className="max-w-3xl animate-reveal">
+            <p className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[.24em] text-primary">
+              <span className="h-px w-10 bg-primary" /> Transporte executivo premium
+            </p>
+            <h1 className="font-display text-5xl leading-[1.04] text-foreground md:text-7xl lg:text-[5.2rem]">
+              Seu destino começa com uma{" "}
+              <em className="font-light text-primary">experiência melhor.</em>
+            </h1>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-foreground/75 md:text-xl">
+              Transporte executivo com conforto, segurança e pontualidade para cada momento da sua
+              viagem.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button size="lg" onClick={() => scroll("#orcamento")} className="h-13 px-7">
+                Solicitar orçamento <ArrowRight />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => scroll("#frota")}
+                className="h-13 border-foreground/30 bg-background/10 px-7 text-foreground backdrop-blur hover:bg-foreground hover:text-background"
+              >
+                Conhecer a frota
+              </Button>
+            </div>
+          </div>
+          <div className="mt-16 grid max-w-4xl grid-cols-2 gap-px border border-foreground/15 bg-foreground/15 md:grid-cols-4">
+            {[
+              { Icon: UserRoundCheck, label: "Motoristas profissionais" },
+              { Icon: Headphones, label: "Atendimento personalizado" },
+              { Icon: BadgeCheck, label: "Veículos executivos" },
+              { Icon: RouteIcon, label: "Viagens e transfers" },
+            ].map(({ Icon, label }) => (
+              <div
+                key={label}
+                className="flex items-center gap-3 bg-background/40 p-4 backdrop-blur-md"
+              >
+                <Icon className="size-5 text-primary" />
+                <span className="text-xs text-foreground/85">{label}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="mt-16 grid max-w-4xl grid-cols-2 gap-px border border-foreground/15 bg-foreground/15 md:grid-cols-4">{[{Icon:UserRoundCheck,label:"Motoristas profissionais"},{Icon:Headphones,label:"Atendimento personalizado"},{Icon:BadgeCheck,label:"Veículos executivos"},{Icon:RouteIcon,label:"Viagens e transfers"}].map(({Icon,label})=><div key={label} className="flex items-center gap-3 bg-background/40 p-4 backdrop-blur-md"><Icon className="size-5 text-primary"/><span className="text-xs text-foreground/85">{label}</span></div>)}</div>
-      </div>
-    </section>
+      </section>
 
-    <section id="orcamento" className="relative z-10 -mt-14 px-4"><div className="mx-auto max-w-7xl border border-border bg-card p-6 shadow-2xl md:p-8"><div className="mb-6 flex items-end justify-between gap-4"><div><p className="eyebrow">Cotação rápida</p><h2 className="font-display text-3xl">Para onde vamos?</h2></div><p className="hidden text-xs text-muted-foreground sm:block">Resposta personalizada via WhatsApp</p></div><QuoteForm selectedVehicle={currentVehicle.name}/></div></section>
+      <section id="orcamento" className="relative z-10 -mt-14 px-4">
+        <div className="mx-auto max-w-7xl border border-border bg-card p-6 shadow-2xl md:p-8">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow">Cotação rápida</p>
+              <h2 className="font-display text-3xl">Para onde vamos?</h2>
+            </div>
+            <p className="hidden text-xs text-muted-foreground sm:block">
+              Resposta personalizada via WhatsApp
+            </p>
+          </div>
+          <QuoteForm selectedVehicle={currentVehicle.name} />
+        </div>
+      </section>
 
-    <section className="section-pad bg-background"><div className="mx-auto max-w-7xl px-5 lg:px-8"><SectionHead eyebrow="Experiência de ponta a ponta" title="Cada trecho, sob controle." copy="Do primeiro contato à chegada, acompanhamos os detalhes para que você apenas aproveite o caminho." dark/><div className="route-panel relative grid gap-10 overflow-hidden border border-border bg-card p-8 md:grid-cols-3 md:p-12">{[["01","Curitiba","Embarque no horário combinado"],["02","Aeroporto Internacional","Trajeto monitorado em tempo real"],["03","Destino final","Chegada tranquila e segura"]].map(([n,title,text],i)=><div key={n} className="relative z-10"><div className="mb-6 flex items-center"><span className="grid size-12 place-items-center rounded-full border border-primary bg-background text-sm text-primary shadow-[0_0_0_8px_var(--route-ring)]">{i===1?<Plane/>:<MapPin/>}</span>{i<2&&<span className="route-line hidden h-px flex-1 md:block"/>}</div><p className="text-xs text-primary">{n}</p><h3 className="mt-2 font-display text-2xl">{title}</h3><p className="mt-2 text-sm text-muted-foreground">{text}</p></div>)}</div></div></section>
+      <section className="section-pad bg-background">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <SectionHead
+            eyebrow="Experiência de ponta a ponta"
+            title="Cada trecho, sob controle."
+            copy="Do primeiro contato à chegada, acompanhamos os detalhes para que você apenas aproveite o caminho."
+            dark
+          />
+          <div className="route-panel relative grid gap-10 overflow-hidden border border-border bg-card p-8 md:grid-cols-3 md:p-12">
+            {[
+              ["01", "Curitiba", "Embarque no horário combinado"],
+              ["02", "Aeroporto Internacional", "Trajeto monitorado em tempo real"],
+              ["03", "Destino final", "Chegada tranquila e segura"],
+            ].map(([n, title, text], i) => (
+              <div key={n} className="relative z-10">
+                <div className="mb-6 flex items-center">
+                  <span className="grid size-12 place-items-center rounded-full border border-primary bg-background text-sm text-primary shadow-[0_0_0_8px_var(--route-ring)]">
+                    {i === 1 ? <Plane /> : <MapPin />}
+                  </span>
+                  {i < 2 && <span className="route-line hidden h-px flex-1 md:block" />}
+                </div>
+                <p className="text-xs text-primary">{n}</p>
+                <h3 className="mt-2 font-display text-2xl">{title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    <section id="servicos" className="section-pad bg-paper text-ink"><div className="mx-auto max-w-7xl px-5 lg:px-8"><SectionHead eyebrow="Soluções sob medida" title="Um serviço para cada ocasião." copy="Operação precisa, atendimento humano e o veículo adequado para seu compromisso."/><div className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">{services.map((s,i)=><button key={s.title} onClick={()=>setService(s)} className={`service-card group min-h-64 bg-paper p-7 text-left ${i===0?"lg:col-span-2":""}`}><s.icon className="size-8 text-gold"/><h3 className="mt-10 font-display text-2xl">{s.title}</h3><p className="mt-3 text-sm leading-relaxed text-ink-muted">{s.text}</p><span className="mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[.15em] text-gold opacity-70 transition group-hover:opacity-100">Saiba mais <ArrowRight className="size-4"/></span></button>)}</div></div></section>
+      <section id="servicos" className="section-pad bg-paper text-ink">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <SectionHead
+            eyebrow="Soluções sob medida"
+            title="Um serviço para cada ocasião."
+            copy="Operação precisa, atendimento humano e o veículo adequado para seu compromisso."
+          />
+          <div className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+            {services.map((s, i) => (
+              <button
+                key={s.title}
+                onClick={() => setService(s)}
+                className={`service-card group min-h-64 bg-paper p-7 text-left ${i === 0 ? "lg:col-span-2" : ""}`}
+              >
+                <s.icon className="size-8 text-gold" />
+                <h3 className="mt-10 font-display text-2xl">{s.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">{s.text}</p>
+                <span className="mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[.15em] text-gold opacity-70 transition group-hover:opacity-100">
+                  Saiba mais <ArrowRight className="size-4" />
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    <section id="frota" className="section-pad bg-background"><div className="mx-auto max-w-7xl px-5 lg:px-8"><div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><SectionHead eyebrow="Nossa frota" title="Excelência em movimento." copy="Veículos criteriosamente selecionados, higienizados e revisados antes de cada atendimento." dark/><div className="mb-10 flex gap-2"><Button variant="outline" size="icon" onClick={()=>setVehicle((vehicle+fleet.length-1)%fleet.length)} aria-label="Veículo anterior"><ChevronLeft/></Button><Button variant="outline" size="icon" onClick={()=>setVehicle((vehicle+1)%fleet.length)} aria-label="Próximo veículo"><ChevronRight/></Button></div></div><div className="grid overflow-hidden border border-border bg-card lg:grid-cols-[1.35fr_.65fr]"><div className="relative min-h-96"><img src={fleetImage} alt="Frota de vans executivas Veloce" loading="lazy" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover"/><span className="absolute left-5 top-5 bg-background/80 px-3 py-2 text-[10px] uppercase tracking-[.18em] backdrop-blur">Frota premium</span></div><div className="flex flex-col justify-center p-7 md:p-10"><p className="text-xs font-semibold uppercase tracking-[.2em] text-primary">Modelo {String(vehicle+1).padStart(2,"0")}</p><h3 className="mt-3 font-display text-4xl">{currentVehicle.name}</h3><p className="mt-2 text-muted-foreground">{currentVehicle.subtitle}</p><div className="my-8 grid grid-cols-2 gap-4 border-y border-border py-6"><div><Users className="mb-2 text-primary"/><strong className="block text-sm">{currentVehicle.seats}</strong></div><div><Luggage className="mb-2 text-primary"/><strong className="block text-sm">{currentVehicle.luggage}</strong></div></div><ul className="grid gap-3">{benefits.slice(0,5).map(x=><li key={x} className="flex items-center gap-2 text-sm text-muted-foreground"><Check className="size-4 text-primary"/>{x}</li>)}</ul><Button onClick={()=>scroll("#orcamento")} className="mt-8 h-12">Solicitar este veículo <ArrowRight/></Button></div></div></div></section>
+      <section id="frota" className="section-pad bg-background">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <SectionHead
+              eyebrow="Nossa frota"
+              title="Excelência em movimento."
+              copy="Veículos criteriosamente selecionados, higienizados e revisados antes de cada atendimento."
+              dark
+            />
+            <div className="mb-10 flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setVehicle((vehicle + fleet.length - 1) % fleet.length)}
+                aria-label="Veículo anterior"
+              >
+                <ChevronLeft />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setVehicle((vehicle + 1) % fleet.length)}
+                aria-label="Próximo veículo"
+              >
+                <ChevronRight />
+              </Button>
+            </div>
+          </div>
+          <div className="grid overflow-hidden border border-border bg-card lg:grid-cols-[1.35fr_.65fr]">
+            <div className="relative min-h-96">
+              <img
+                src={fleetImage}
+                alt="Frota de vans executivas da MJG Transportes"
+                loading="lazy"
+                width={1408}
+                height={1008}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <span className="absolute left-5 top-5 bg-background/80 px-3 py-2 text-[10px] uppercase tracking-[.18em] backdrop-blur">
+                Frota premium
+              </span>
+            </div>
+            <div className="flex flex-col justify-center p-7 md:p-10">
+              <p className="text-xs font-semibold uppercase tracking-[.2em] text-primary">
+                Modelo {String(vehicle + 1).padStart(2, "0")}
+              </p>
+              <h3 className="mt-3 font-display text-4xl">{currentVehicle.name}</h3>
+              <p className="mt-2 text-muted-foreground">{currentVehicle.subtitle}</p>
+              <div className="my-8 grid grid-cols-2 gap-4 border-y border-border py-6">
+                <div>
+                  <Users className="mb-2 text-primary" />
+                  <strong className="block text-sm">{currentVehicle.seats}</strong>
+                </div>
+                <div>
+                  <Luggage className="mb-2 text-primary" />
+                  <strong className="block text-sm">{currentVehicle.luggage}</strong>
+                </div>
+              </div>
+              <ul className="grid gap-3">
+                {benefits.slice(0, 5).map((x) => (
+                  <li key={x} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Check className="size-4 text-primary" />
+                    {x}
+                  </li>
+                ))}
+              </ul>
+              <Button onClick={() => scroll("#orcamento")} className="mt-8 h-12">
+                Solicitar este veículo <ArrowRight />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section className="bg-paper text-ink"><div className="grid lg:grid-cols-2"><div className="relative min-h-[520px]"><img src={interiorImage} alt="Interior luxuoso de van executiva" loading="lazy" width={1408} height={1008} className="absolute inset-0 h-full w-full object-cover"/></div><div className="flex items-center px-6 py-16 md:px-16"><div><SectionHead eyebrow="Conforto em cada detalhe" title="O caminho também faz parte da experiência." copy="Cabines pensadas para descansar, trabalhar ou conversar com privacidade. Cada escolha transforma o deslocamento em um momento seu."/><div className="grid grid-cols-2 gap-6">{[{Icon:Sparkles,title:"Iluminação ambiente"},{Icon:Wifi,title:"Conectividade a bordo"},{Icon:Usb,title:"USB individual"},{Icon:Luggage,title:"Espaço de bagagem"}].map(({Icon,title})=><div key={title} className="border-t border-line pt-4"><Icon className="size-5 text-gold"/><p className="mt-3 text-sm font-semibold">{title}</p></div>)}</div></div></div></div></section>
+      <section className="bg-paper text-ink">
+        <div className="grid lg:grid-cols-2">
+          <div className="relative min-h-[520px]">
+            <img
+              src={interiorImage}
+              alt="Interior luxuoso de van executiva"
+              loading="lazy"
+              width={1408}
+              height={1008}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+          <div className="flex items-center px-6 py-16 md:px-16">
+            <div>
+              <SectionHead
+                eyebrow="Conforto em cada detalhe"
+                title="O caminho também faz parte da experiência."
+                copy="Cabines pensadas para descansar, trabalhar ou conversar com privacidade. Cada escolha transforma o deslocamento em um momento seu."
+              />
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { Icon: Sparkles, title: "Ambiente bem cuidado" },
+                  { Icon: Wifi, title: "Comodidades sob consulta" },
+                  { Icon: Usb, title: "Configuração conforme o veículo" },
+                  { Icon: Luggage, title: "Espaço de bagagem" },
+                ].map(({ Icon, title }) => (
+                  <div key={title} className="border-t border-line pt-4">
+                    <Icon className="size-5 text-gold" />
+                    <p className="mt-3 text-sm font-semibold">{title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="sobre" className="section-pad bg-background"><div className="mx-auto max-w-7xl px-5 lg:px-8"><div className="grid gap-14 lg:grid-cols-2"><div><SectionHead eyebrow="Por que a Veloce" title="Confiança que acompanha você." copy="Uma operação construída sobre discrição, preparo e consistência — do primeiro quilômetro ao último." dark/><div className="grid grid-cols-2 gap-px bg-border">{[["3.800+","viagens realizadas"],["24 mil+","passageiros atendidos"],["12","anos de experiência"],["24/7","atendimento disponível"]].map(([v,l])=><div key={l} className="bg-background p-6"><strong className="font-display text-4xl text-primary">{v}</strong><span className="mt-2 block text-xs text-muted-foreground">{l}</span></div>)}</div></div><div className="grid content-center gap-4">{[{Icon:UserRoundCheck,title:"Motoristas treinados e bilíngues"},{Icon:Plane,title:"Monitoramento de voos em tempo real"},{Icon:Clock3,title:"Compromisso absoluto com horários"},{Icon:ShieldCheck,title:"Seguro total e operação regularizada"}].map(({Icon,title})=><div key={title} className="flex items-center gap-5 border-b border-border py-5"><span className="grid size-12 place-items-center bg-secondary text-primary"><Icon/></span><p className="font-display text-xl">{title}</p></div>)}</div></div></div></section>
+      <section id="sobre" className="section-pad bg-background">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="grid gap-14 lg:grid-cols-2">
+            <div>
+              <SectionHead
+                eyebrow="Por que a MJG"
+                title="Confiança que acompanha você."
+                copy="Uma operação construída sobre discrição, preparo e consistência — do primeiro quilômetro ao último."
+                dark
+              />
+              <div className="grid grid-cols-2 gap-px bg-border">
+                {[
+                  ["Sob medida", "planejamento de cada viagem"],
+                  ["Conforto", "atenção em cada detalhe"],
+                  ["Segurança", "condução responsável"],
+                  ["Agilidade", "atendimento personalizado"],
+                ].map(([v, l]) => (
+                  <div key={l} className="bg-background p-6">
+                    <strong className="font-display text-4xl text-primary">{v}</strong>
+                    <span className="mt-2 block text-xs text-muted-foreground">{l}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid content-center gap-4">
+              {[
+                { Icon: UserRoundCheck, title: "Atendimento profissional" },
+                { Icon: Plane, title: "Planejamento de transfers" },
+                { Icon: Clock3, title: "Compromisso com horários" },
+                { Icon: ShieldCheck, title: "Cuidado durante todo o trajeto" },
+              ].map(({ Icon, title }) => (
+                <div key={title} className="flex items-center gap-5 border-b border-border py-5">
+                  <span className="grid size-12 place-items-center bg-secondary text-primary">
+                    <Icon />
+                  </span>
+                  <p className="font-display text-xl">{title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section className="section-pad bg-paper text-ink"><div className="mx-auto max-w-7xl px-5 lg:px-8"><SectionHead eyebrow="Como funciona" title="Simples para você. Preciso nos bastidores."/><div className="grid gap-8 md:grid-cols-4">{["Informe sua viagem","Receba sua cotação","Confirmação e detalhes","Motorista aguardando"].map((x,i)=><div key={x} className="relative border-t border-line pt-6"><span className="font-display text-5xl text-gold/30">0{i+1}</span><h3 className="mt-6 font-display text-xl">{x}</h3><p className="mt-2 text-sm leading-relaxed text-ink-muted">{["Conte origem, destino e número de passageiros.","Enviamos a melhor configuração e condições.","Você recebe todos os dados do atendimento.","Recepção personalizada no local combinado."][i]}</p></div>)}</div></div></section>
+      <section className="section-pad bg-paper text-ink">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <SectionHead eyebrow="Como funciona" title="Simples para você. Preciso nos bastidores." />
+          <div className="grid gap-8 md:grid-cols-4">
+            {[
+              "Informe sua viagem",
+              "Receba sua cotação",
+              "Confirmação e detalhes",
+              "Motorista aguardando",
+            ].map((x, i) => (
+              <div key={x} className="relative border-t border-line pt-6">
+                <span className="font-display text-5xl text-gold/30">0{i + 1}</span>
+                <h3 className="mt-6 font-display text-xl">{x}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                  {
+                    [
+                      "Conte origem, destino e número de passageiros.",
+                      "Enviamos a melhor configuração e condições.",
+                      "Você recebe todos os dados do atendimento.",
+                      "Recepção personalizada no local combinado.",
+                    ][i]
+                  }
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    <section id="empresas" className="relative isolate overflow-hidden bg-background py-24"><img src={fleetImage} alt="Frota executiva para empresas" loading="lazy" width={1408} height={1008} className="absolute inset-0 -z-20 h-full w-full object-cover opacity-30"/><div className="absolute inset-0 -z-10 bg-background/80"/><div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2 lg:px-8"><div><p className="eyebrow">Veloce Corporate</p><h2 className="font-display text-4xl leading-tight md:text-6xl">Mobilidade à altura da sua empresa.</h2><p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">Faturamento corporativo, recepção VIP em aeroportos, convenções e relatórios gerenciais em uma operação dedicada.</p><Button className="mt-8 h-12 px-7" onClick={()=>openWhatsApp("Olá, Veloce! Gostaria de conhecer a solução de transporte corporativo.")}>Falar com um consultor <BriefcaseBusiness/></Button></div><div className="grid grid-cols-2 gap-3 self-end">{["Centro de custos","Equipe dedicada","Relatórios gerenciais","Padrão unificado"].map(x=><div key={x} className="border border-foreground/10 bg-background/60 p-5 backdrop-blur"><Check className="text-primary"/><p className="mt-6 text-sm font-medium">{x}</p></div>)}</div></div></section>
+      <section id="empresas" className="relative isolate overflow-hidden bg-background py-24">
+        <img
+          src={fleetImage}
+          alt="Frota executiva para empresas"
+          loading="lazy"
+          width={1408}
+          height={1008}
+          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-30"
+        />
+        <div className="absolute inset-0 -z-10 bg-background/80" />
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2 lg:px-8">
+          <div>
+            <p className="eyebrow">MJG Empresas</p>
+            <h2 className="font-display text-4xl leading-tight md:text-6xl">
+              Mobilidade à altura da sua empresa.
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
+              Transporte para executivos, equipes, convidados, aeroportos e eventos com planejamento
+              alinhado às necessidades da empresa.
+            </p>
+            <Button
+              className="mt-8 h-12 px-7"
+              onClick={() =>
+                openWhatsApp(
+                  `Olá, ${company.name}! Gostaria de conhecer a solução de transporte corporativo.`,
+                )
+              }
+            >
+              Falar com um consultor <BriefcaseBusiness />
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 self-end">
+            {[
+              "Atendimento personalizado",
+              "Planejamento de rotas",
+              "Viagens corporativas",
+              "Solução para grupos",
+            ].map((x) => (
+              <div
+                key={x}
+                className="border border-foreground/10 bg-background/60 p-5 backdrop-blur"
+              >
+                <Check className="text-primary" />
+                <p className="mt-6 text-sm font-medium">{x}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    <section className="section-pad bg-paper text-ink"><div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[.8fr_1.2fr] lg:px-8"><div><SectionHead eyebrow="Sua viagem" title="Informação clara. Do embarque à chegada." copy="Antes de sair, você recebe os dados essenciais do atendimento e acompanha tudo com tranquilidade."/><div className="flex gap-8"><div><strong className="block font-display text-2xl">100%</strong><span className="text-xs text-ink-muted">confirmado</span></div><div><strong className="block font-display text-2xl">24/7</strong><span className="text-xs text-ink-muted">suporte</span></div></div></div><div className="boarding-pass overflow-hidden border border-line bg-ink text-paper shadow-2xl"><div className="flex items-center justify-between border-b border-paper/15 p-6"><span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[.2em] text-gold"><span className="size-2 animate-pulse rounded-full bg-success"/> Viagem programada</span><span className="font-mono text-xs text-paper/50">VL-0826</span></div><div className="grid gap-8 p-6 sm:grid-cols-[1fr_auto_1fr]"><div><span className="ticket-label">Embarque</span><strong className="mt-2 block font-display text-3xl">08:30</strong><p className="mt-2 text-sm text-paper/60">Batel, Curitiba</p></div><div className="flex items-center text-gold"><span className="h-px w-8 bg-gold/50"/><Plane/><span className="h-px w-8 bg-gold/50"/></div><div className="sm:text-right"><span className="ticket-label">Destino</span><strong className="mt-2 block font-display text-3xl">CWB</strong><p className="mt-2 text-sm text-paper/60">Aeroporto Internacional</p></div></div><div className="flex flex-wrap items-center justify-between gap-5 border-t border-dashed border-paper/20 p-6"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-full bg-paper/10"><UserRoundCheck/></span><div><span className="ticket-label">Motorista parceiro</span><p className="text-sm">Ricardo • ★ 4,98</p></div></div><span className="text-xs text-paper/50">Mercedes Sprinter • VEL-2608</span></div></div></div></section>
+      <section className="section-pad bg-paper text-ink">
+        <div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[.8fr_1.2fr] lg:px-8">
+          <div>
+            <SectionHead
+              eyebrow="Sua viagem"
+              title="Informação clara. Do embarque à chegada."
+              copy="Antes de sair, você recebe os dados essenciais do atendimento e acompanha tudo com tranquilidade."
+            />
+            <div className="flex gap-8">
+              <div>
+                <strong className="block font-display text-2xl">100%</strong>
+                <span className="text-xs text-ink-muted">confirmado</span>
+              </div>
+              <div>
+                <strong className="block font-display text-2xl">24/7</strong>
+                <span className="text-xs text-ink-muted">suporte</span>
+              </div>
+            </div>
+          </div>
+          <div className="boarding-pass overflow-hidden border border-line bg-ink text-paper shadow-2xl">
+            <div className="flex items-center justify-between border-b border-paper/15 p-6">
+              <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[.2em] text-gold">
+                <span className="size-2 animate-pulse rounded-full bg-success" /> Viagem programada
+              </span>
+              <span className="font-mono text-xs text-paper/50">MJG-EXEMPLO</span>
+            </div>
+            <div className="grid gap-8 p-6 sm:grid-cols-[1fr_auto_1fr]">
+              <div>
+                <span className="ticket-label">Embarque</span>
+                <strong className="mt-2 block font-display text-3xl">08:30</strong>
+                <p className="mt-2 text-sm text-paper/60">Batel, Curitiba</p>
+              </div>
+              <div className="flex items-center text-gold">
+                <span className="h-px w-8 bg-gold/50" />
+                <Plane />
+                <span className="h-px w-8 bg-gold/50" />
+              </div>
+              <div className="sm:text-right">
+                <span className="ticket-label">Destino</span>
+                <strong className="mt-2 block font-display text-3xl">CWB</strong>
+                <p className="mt-2 text-sm text-paper/60">Aeroporto Internacional</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-5 border-t border-dashed border-paper/20 p-6">
+              <div className="flex items-center gap-3">
+                <span className="grid size-10 place-items-center rounded-full bg-paper/10">
+                  <UserRoundCheck />
+                </span>
+                <div>
+                  <span className="ticket-label">Motorista parceiro</span>
+                  <p className="text-sm">Definido após a confirmação</p>
+                </div>
+              </div>
+              <span className="text-xs text-paper/50">Veículo definido conforme o grupo</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="avaliacoes" className="section-pad bg-background"><div className="mx-auto max-w-5xl px-5 text-center lg:px-8"><p className="eyebrow justify-center">Avaliações</p><div className="flex justify-center gap-1 text-primary">{Array.from({length:5}).map((_,i)=><Star key={i} className="fill-current"/>)}</div><blockquote className="mx-auto mt-8 max-w-4xl font-display text-3xl leading-snug md:text-5xl">“{currentTestimonial.quote}”</blockquote><p className="mt-8 text-sm font-semibold">{currentTestimonial.name}</p><p className="text-xs text-muted-foreground">{currentTestimonial.role}</p><div className="mt-8 flex justify-center gap-2"><Button variant="outline" size="icon" onClick={()=>setReview((review+2)%3)}><ChevronLeft/></Button><Button variant="outline" size="icon" onClick={()=>setReview((review+1)%3)}><ChevronRight/></Button></div></div></section>
+      <section id="avaliacoes" className="section-pad bg-background">
+        <div className="mx-auto max-w-5xl px-5 text-center lg:px-8">
+          <p className="eyebrow justify-center">Nosso compromisso</p>
+          <blockquote className="mx-auto mt-8 max-w-4xl font-display text-3xl leading-snug md:text-5xl">
+            “{currentTestimonial.quote}”
+          </blockquote>
+          <p className="mt-8 text-sm font-semibold">{currentTestimonial.name}</p>
+          <p className="text-xs text-muted-foreground">{currentTestimonial.role}</p>
+          <div className="mt-8 flex justify-center gap-2">
+            <Button variant="outline" size="icon" onClick={() => setReview((review + 2) % 3)}>
+              <ChevronLeft />
+            </Button>
+            <Button variant="outline" size="icon" onClick={() => setReview((review + 1) % 3)}>
+              <ChevronRight />
+            </Button>
+          </div>
+        </div>
+      </section>
 
-    <section className="grid grid-cols-2 bg-background md:grid-cols-4">{gallery.map((img,i)=><button key={img} onClick={()=>setLightbox(img)} className="group relative aspect-square overflow-hidden md:aspect-[4/3]"><img src={img} alt={["Van executiva em aeroporto","Interior executivo","Frota Veloce","Poltrona executiva"][i]} loading="lazy" width={i===0?1920:1408} height={i===0?1088:1008} className="h-full w-full object-cover transition duration-700 group-hover:scale-105 group-hover:opacity-70"/><ZoomIn className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-foreground opacity-0 transition group-hover:opacity-100"/></button>)}</section>
+      <section className="grid grid-cols-2 bg-background md:grid-cols-4">
+        {gallery.map((img, i) => (
+          <button
+            key={img}
+            onClick={() => setLightbox(img)}
+            className="group relative aspect-square overflow-hidden md:aspect-[4/3]"
+          >
+            <img
+              src={img}
+              alt={
+                [
+                  "Van executiva em aeroporto",
+                  "Interior executivo",
+                  "Frota MJG Transportes",
+                  "Poltrona executiva",
+                ][i]
+              }
+              loading="lazy"
+              width={i === 0 ? 1920 : 1408}
+              height={i === 0 ? 1088 : 1008}
+              className="h-full w-full object-cover transition duration-700 group-hover:scale-105 group-hover:opacity-70"
+            />
+            <ZoomIn className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-foreground opacity-0 transition group-hover:opacity-100" />
+          </button>
+        ))}
+      </section>
 
-    <section className="section-pad bg-paper text-ink"><div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[.7fr_1fr] lg:px-8"><SectionHead eyebrow="Dúvidas frequentes" title="Tudo o que você precisa saber." copy="Não encontrou sua resposta? Nossa equipe está disponível para orientar você."/><Accordion type="single" collapsible>{faqs.map(([q,a],i)=><AccordionItem value={`item-${i}`} key={q} className="border-line"><AccordionTrigger className="py-6 text-base hover:no-underline">{q}</AccordionTrigger><AccordionContent className="pb-6 leading-relaxed text-ink-muted">{a}</AccordionContent></AccordionItem>)}</Accordion></div></section>
+      <section className="section-pad bg-paper text-ink">
+        <div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[.7fr_1fr] lg:px-8">
+          <SectionHead
+            eyebrow="Dúvidas frequentes"
+            title="Tudo o que você precisa saber."
+            copy="Não encontrou sua resposta? Nossa equipe está disponível para orientar você."
+          />
+          <Accordion type="single" collapsible>
+            {faqs.map(([q, a], i) => (
+              <AccordionItem value={`item-${i}`} key={q} className="border-line">
+                <AccordionTrigger className="py-6 text-base hover:no-underline">
+                  {q}
+                </AccordionTrigger>
+                <AccordionContent className="pb-6 leading-relaxed text-ink-muted">
+                  {a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
 
-    <section id="contato" className="section-pad bg-background"><div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-2 lg:px-8"><div><SectionHead eyebrow="Fale com a Veloce" title="Pronto para uma viagem melhor?" copy="Conte o que você precisa. Nossa equipe prepara uma proposta personalizada para seu trajeto." dark/><div className="space-y-4 text-sm text-muted-foreground"><p className="flex items-center gap-3"><MessageCircle className="text-primary"/> Atendimento via WhatsApp</p><p className="flex items-center gap-3"><Clock3 className="text-primary"/> Disponível 24 horas, todos os dias</p><p className="flex items-center gap-3"><MapPin className="text-primary"/> Curitiba, região e viagens nacionais</p></div></div><form className="grid gap-4 border border-border bg-card p-6 md:grid-cols-2 md:p-8" onSubmit={e=>{e.preventDefault();setContactSent(true)}}><label className="space-y-2"><span className="form-label">Nome</span><Input required placeholder="Seu nome"/></label><label className="space-y-2"><span className="form-label">Telefone</span><Input required type="tel" placeholder="(41) 99999-9999"/></label><label className="space-y-2 md:col-span-2"><span className="form-label">E-mail</span><Input required type="email" placeholder="voce@empresa.com.br"/></label><label className="space-y-2 md:col-span-2"><span className="form-label">Como podemos ajudar?</span><Textarea required className="min-h-28" placeholder="Conte os detalhes da viagem"/></label><Button className="h-12 md:col-span-2" type="submit">Enviar solicitação <ArrowRight/></Button>{contactSent&&<p className="text-center text-sm text-success md:col-span-2">Solicitação registrada. Nossa equipe entrará em contato.</p>}</form></div></section>
+      <section id="contato" className="section-pad bg-background">
+        <div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-2 lg:px-8">
+          <div>
+            <SectionHead
+              eyebrow="Fale com a MJG"
+              title="Pronto para uma viagem melhor?"
+              copy="Conte o que você precisa. Nossa equipe prepara uma proposta personalizada para seu trajeto."
+              dark
+            />
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <p className="flex items-center gap-3">
+                <MessageCircle className="text-primary" /> Atendimento via WhatsApp
+              </p>
+              <p className="flex items-center gap-3">
+                <Clock3 className="text-primary" /> Horários de atendimento sob consulta
+              </p>
+              <p className="flex items-center gap-3">
+                <MapPin className="text-primary" /> Curitiba, região e viagens nacionais
+              </p>
+            </div>
+          </div>
+          <form
+            className="grid gap-4 border border-border bg-card p-6 md:grid-cols-2 md:p-8"
+            onSubmit={(e) => {
+              e.preventDefault();
+              openWhatsApp(
+                `Olá, ${company.name}!\n\nNome: ${contact.name}\nTelefone: ${contact.phone}\nE-mail: ${contact.email}\nMensagem: ${contact.message}`,
+              );
+              setContactSent(true);
+            }}
+          >
+            <label className="space-y-2">
+              <span className="form-label">Nome</span>
+              <Input
+                required
+                value={contact.name}
+                onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                placeholder="Seu nome"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="form-label">Telefone</span>
+              <Input
+                required
+                value={contact.phone}
+                onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+                type="tel"
+                placeholder="(41) 99999-9999"
+              />
+            </label>
+            <label className="space-y-2 md:col-span-2">
+              <span className="form-label">E-mail</span>
+              <Input
+                required
+                value={contact.email}
+                onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                type="email"
+                placeholder="voce@empresa.com.br"
+              />
+            </label>
+            <label className="space-y-2 md:col-span-2">
+              <span className="form-label">Como podemos ajudar?</span>
+              <Textarea
+                required
+                value={contact.message}
+                onChange={(e) => setContact({ ...contact, message: e.target.value })}
+                className="min-h-28"
+                placeholder="Conte os detalhes da viagem"
+              />
+            </label>
+            <Button className="h-12 md:col-span-2" type="submit">
+              Enviar pelo WhatsApp <ArrowRight />
+            </Button>
+            {contactSent && (
+              <p className="text-center text-sm text-success md:col-span-2">
+                WhatsApp aberto com sua solicitação pronta para envio.
+              </p>
+            )}
+          </form>
+        </div>
+      </section>
 
-    <footer className="border-t border-border bg-card"><div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 lg:px-8"><div className="md:col-span-2"><p className="font-display text-2xl">VELOCE <span className="text-primary">EXECUTIVE VANS</span></p><p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">Transporte executivo pensado para quem valoriza tempo, conforto e confiança.</p></div><div><p className="footer-title">Atendimento</p><p className="footer-copy">Curitiba e região<br/>Aeroportos e viagens<br/>24 horas por dia</p></div><div><p className="footer-title">Segurança</p><p className="footer-copy">Veículos regularizados<br/>Motoristas treinados<br/>Seguro de passageiros</p></div></div><div className="border-t border-border px-5 py-5"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-2 text-[11px] text-muted-foreground sm:flex-row"><span>© 2026 Veloce Executive Vans. Todos os direitos reservados.</span><span>Privacidade · Termos de uso</span></div></div></footer>
+      <footer className="border-t border-border bg-card">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 lg:px-8">
+          <div className="md:col-span-2">
+            <p className="font-display text-2xl">
+              MJG <span className="text-primary">TRANSPORTES</span>
+            </p>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Transporte executivo pensado para quem valoriza tempo, conforto e confiança.
+            </p>
+          </div>
+          <div>
+            <p className="footer-title">Atendimento</p>
+            <p className="footer-copy">
+              Curitiba e região
+              <br />
+              Aeroportos e viagens
+              <br />
+              Atendimento sob consulta
+            </p>
+          </div>
+          <div>
+            <p className="footer-title">Segurança</p>
+            <p className="footer-copy">
+              Planejamento de viagem
+              <br />
+              Atendimento profissional
+              <br />
+              Detalhes confirmados na cotação
+            </p>
+          </div>
+        </div>
+        <div className="border-t border-border px-5 py-5">
+          <div className="mx-auto flex max-w-7xl flex-col justify-between gap-2 text-[11px] text-muted-foreground sm:flex-row">
+            <span>© 2026 MJG Transportes. Todos os direitos reservados.</span>
+            <span>
+              <a href="/privacidade" className="hover:text-primary">
+                Privacidade
+              </a>{" "}
+              ·{" "}
+              <a href="/termos" className="hover:text-primary">
+                Termos de uso
+              </a>
+            </span>
+          </div>
+        </div>
+      </footer>
 
-    <Button onClick={()=>openWhatsApp("Olá, Veloce! Gostaria de solicitar um orçamento de transporte executivo.")} className="fixed bottom-5 right-5 z-40 size-14 rounded-full bg-success text-success-foreground shadow-2xl hover:bg-success/90" size="icon" aria-label="Falar no WhatsApp"><MessageCircle className="size-6"/></Button>
+      <Button
+        onClick={() =>
+          openWhatsApp(
+            `Olá, ${company.name}! Gostaria de solicitar um orçamento de transporte executivo.`,
+          )
+        }
+        className="fixed bottom-5 right-5 z-40 size-14 rounded-full bg-success text-success-foreground shadow-2xl hover:bg-success/90"
+        size="icon"
+        aria-label="Falar no WhatsApp"
+      >
+        <MessageCircle className="size-6" />
+      </Button>
 
-    <Dialog open={!!service} onOpenChange={()=>setService(null)}><DialogContent className="border-border bg-card"><DialogHeader><DialogTitle className="font-display text-3xl">{service?.title}</DialogTitle><DialogDescription className="pt-3 leading-relaxed">{service?.text} Nossa equipe planeja horários, pontos de encontro e veículo ideal conforme o perfil da sua viagem.</DialogDescription></DialogHeader><Button onClick={()=>{setService(null);scroll("#orcamento")}}>Solicitar este serviço</Button></DialogContent></Dialog>
-    {lightbox&&<div className="fixed inset-0 z-50 grid place-items-center bg-background/95 p-5" onClick={()=>setLightbox(null)}><Button variant="outline" size="icon" className="absolute right-5 top-5" onClick={()=>setLightbox(null)}><X/></Button><img src={lightbox} alt="Visualização ampliada da frota Veloce" className="max-h-[86vh] max-w-[92vw] object-contain"/></div>}
-  </main>;
+      <Dialog open={!!service} onOpenChange={() => setService(null)}>
+        <DialogContent className="border-border bg-card">
+          <DialogHeader>
+            <DialogTitle className="font-display text-3xl">{service?.title}</DialogTitle>
+            <DialogDescription className="pt-3 leading-relaxed">
+              {service?.text} Nossa equipe planeja horários, pontos de encontro e veículo ideal
+              conforme o perfil da sua viagem.
+            </DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => {
+              setService(null);
+              scroll("#orcamento");
+            }}
+          >
+            Solicitar este serviço
+          </Button>
+        </DialogContent>
+      </Dialog>
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-background/95 p-5"
+          onClick={() => setLightbox(null)}
+        >
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-5 top-5"
+            onClick={() => setLightbox(null)}
+          >
+            <X />
+          </Button>
+          <img
+            src={lightbox}
+            alt="Visualização ampliada da frota MJG Transportes"
+            className="max-h-[86vh] max-w-[92vw] object-contain"
+          />
+        </div>
+      )}
+    </main>
+  );
 }
-function RouteIcon(props: React.ComponentProps<typeof Plane>) { return <Plane {...props}/> }
+function RouteIcon(props: React.ComponentProps<typeof Plane>) {
+  return <Plane {...props} />;
+}

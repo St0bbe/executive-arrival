@@ -1,12 +1,13 @@
-# Executive Arrival
+# MJG Transportes
 
 Implemente o escopo completo solicitado agora; utilize planejamento interno e não apresente outro plano de implementação para aprovação.
 
 Crie um site profissional, moderno, sofisticado e totalmente responsivo para uma empresa de TRANSPORTE EXECUTIVO especializada em vans executivas, com acabamento de alto padrão (dark graphite/preto, detalhes elegantes dourados/âmbar ou azul premium, tipografia moderna, microinterações fluidas).
 
 Requisitos detalhados:
+
 1. Header / Navbar:
-   - Logo sofisticada de transporte executivo (ex: "Veloce Executive Vans" ou "Prime Vans Executivas")
+   - Logo sofisticada da "MJG Transportes"
    - Links: Início, Serviços, Frota, Empresas, Sobre, Avaliações, Contato
    - Botão de destaque "Solicitar Orçamento"
    - Transparente sobre o Hero e sólido com blur ao rolar
